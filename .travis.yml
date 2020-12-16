@@ -1,10 +1,10 @@
 language: csharp
 mono: none
 dotnet: 2.1.502
-solution: Cactus.Blade.Serialization.sln
+solution: Cactus.Blade.MimeType.sln
 install:
   - dotnet restore
 script:
-  - dotnet msbuild /p:Configuration=Release Cactus.Blade.Serialization.sln
+  - dotnet msbuild /p:Configuration=Release Cactus.Blade.MimeType.sln
   - dotnet restore
-  - dotnet test Serialization.Test/Serialization.Test.csproj
+  - dotnet test MimeType.Test/MimeType.Test.csproj
