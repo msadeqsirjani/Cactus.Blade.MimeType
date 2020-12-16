@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MimeType
+namespace Cactus.Blade.MimeType
 {
     internal class MimeStore : Dictionary<string, string>
     {
