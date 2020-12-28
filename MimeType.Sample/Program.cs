@@ -7,11 +7,8 @@ namespace MimeType.Sample
     {
         internal static void Main(string[] args)
         {
-            //Adding Resource file 
-            Mime.AddMimeResources(typeof(Content.MimeType));
-
             //Using static method get mime Type From the Resources
-            var name = Mime.Get("ami");
+            var name = Mime.GetMimeType("ami");
             Console.WriteLine("ami = " + name);
 
             IMime mimeType = new Mime();

@@ -9,11 +9,10 @@ namespace MimeType.Test
         [TestMethod]
         public void MimeTypeTest1()
         {
-            Mime.AddMimeResources(typeof(Content.MimeType));
 
-            var name = Mime.Get("ami");
+            var name = Mime.GetMimeType("ami");
 
-            Assert.AreNotEqual(name, "application/vnd.amiga.ami");
+            Assert.AreEqual(name, "application/vnd.amiga.ami");
 
         }
 
@@ -24,7 +23,7 @@ namespace MimeType.Test
 
             var mimeType = mime.Get("3dml");
 
-            Assert.AreNotEqual(mimeType, "text/vnd.in3d.3dml");
+            Assert.AreEqual(mimeType, "text/vnd.in3d.3dml");
         }
 
         [TestMethod]
@@ -34,7 +33,7 @@ namespace MimeType.Test
 
             var mimeType = mime["z3"];
 
-            Assert.AreNotEqual(mimeType, "text/vnd.in3d.3dml");
+            Assert.AreEqual(mimeType, "application/x-zmachine");
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IMime
     {
-        string this[string extension] { get; }
+        string this[string key] { get; }
     }
 }

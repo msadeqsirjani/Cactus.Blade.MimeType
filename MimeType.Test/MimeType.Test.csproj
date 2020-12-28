@@ -17,16 +17,4 @@
     <ProjectReference Include="../MimeType/MimeType.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Content\MimeType-audio.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\MimeType-videos.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Content\MimeType.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

@@ -4,14 +4,14 @@ namespace Cactus.Blade.MimeType
 {
     public static class MimeExtension
     {
-        public static string Get(this IMime mime, string fileNameOrExtension)
+        public static string Get(this IMime mime, string fileOrExtension)
         {
-            return mime[fileNameOrExtension];
+            return mime[fileOrExtension];
         }
 
-        public static Task<string> GetAsync(this IMime mime, string fileNameOrExtension)
+        public static Task<string> GetAsync(this IMime mime, string fileOrExtension)
         {
-            return Task.FromResult(mime[fileNameOrExtension]);
+            return Task.FromResult(mime[fileOrExtension]);
         }
     }
 }

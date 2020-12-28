@@ -1,6 +1,4 @@
-﻿using Cactus.Blade.MimeType.Resources;
-using Cactus.Blade.MimeType.VirtualFile;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,78 +6,53 @@ namespace Cactus.Blade.MimeType
 {
     public class Mime : IMime
     {
-        private static readonly MimeTypeStore StoreMimeType = new MimeTypeStore();
+        private const string DefaultExtension = "bin";
+        private const string DefaultMimeType = "application/octet-stream";
 
-        public string this[string fileNameOrExtension] => Get(fileNameOrExtension);
+        private static readonly Lazy<MimeStore> MimeTypeMap = new Lazy<MimeStore>(() => new MimeStore());
 
-        public static void AddMimeResources(params Type[] resourceNames)
+
+        public static string GetExtension(string mime)
         {
-            var newResourceNames = resourceNames.ToList();
-            newResourceNames.Add(typeof(AllMimeType));
+            var extension = MimeTypeMap.Value.FirstOrDefault(x => x.Value.Contains(mime)).Key;
 
-            foreach (var mimeType in newResourceNames)
-            {
-                var folderOrFileName = MimeTypeResourceNameAttribute.GetName(mimeType);
-                StoreMimeType.Add(VirtualFileFinder.Find(mimeType, folderOrFileName));
-            }
+            return extension ?? DefaultExtension;
         }
 
-        public static async Task AddMimeResourcesAsync(params Type[] resourceNames)
+        public static string GetMimeType(string file)
         {
-            var newResourceNames = resourceNames.ToList();
-            newResourceNames.Add(typeof(AllMimeType));
+            var extension = file;
+            var index = extension.LastIndexOf('.');
 
-            foreach (var mimeType in newResourceNames)
-            {
-                var folderOrFileName = await MimeTypeResourceNameAttribute.GetNameAsync(mimeType);
-                StoreMimeType.Add(await VirtualFileFinder.FindAsync(mimeType, folderOrFileName));
-            }
+            if (index != -1 && extension.Length > index + 1) extension = file[(index + 1)..].ToLower();
+
+            return MimeTypeMap.Value.TryGetValue(extension, out var result) ? result : DefaultMimeType;
         }
 
-        public static string Get(string fileNameOrExtension)
+        public static Task<string> GetMimeTypeAsync(string file)
         {
-            if (!StoreMimeType.Any())
-                AddMimeResources();
+            var extension = file;
+            var index = extension.LastIndexOf('.');
 
-            return StoreMimeType.GetValue(GetExtension(fileNameOrExtension));
+            if (index != -1 && extension.Length > index + 1) extension = file[(index + 1)..].ToLower();
+
+            var mime = MimeTypeMap.Value.TryGetValue(extension, out var result) ? result : DefaultMimeType;
+
+            return Task.FromResult(mime);
         }
 
-        public static async Task<string> GetAsync(string fileNameOrExtension)
+        public static void Upsert(string mime, string extension)
         {
-            if (!StoreMimeType.Any())
-                await AddMimeResourcesAsync();
-
-            return await StoreMimeType.GetValueAsync(await GetExtensionAsync(fileNameOrExtension));
+            MimeTypeMap.Value[extension] = mime;
         }
 
-        public static string GetExtension(string fileNameOrExtension)
+        public static Task UpsertAsync(string mime, string extension)
         {
-            var dotIndex = fileNameOrExtension.LastIndexOf(".", StringComparison.Ordinal);
+            MimeTypeMap.Value[extension] = mime;
 
-            if (dotIndex < 0)
-                return fileNameOrExtension;
-
-            fileNameOrExtension = fileNameOrExtension.Substring(dotIndex);
-            fileNameOrExtension = fileNameOrExtension.StartsWith(".")
-                ? fileNameOrExtension.Replace(".", "")
-                : fileNameOrExtension;
-
-            return fileNameOrExtension;
+            return Task.CompletedTask;
         }
 
-        public static Task<string> GetExtensionAsync(string fileNameOrExtension)
-        {
-            var dotIndex = fileNameOrExtension.LastIndexOf(".", StringComparison.Ordinal);
-
-            if (dotIndex < 0)
-                return Task.FromResult(fileNameOrExtension);
-
-            fileNameOrExtension = fileNameOrExtension.Substring(dotIndex);
-            fileNameOrExtension = fileNameOrExtension.StartsWith(".")
-                ? fileNameOrExtension.Replace(".", "")
-                : fileNameOrExtension;
-
-            return Task.FromResult(fileNameOrExtension);
-        }
+        public string this[string key] => MimeTypeMap.Value[key];
     }
 }
